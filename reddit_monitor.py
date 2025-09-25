@@ -53,8 +53,9 @@ class SimpleRedditMonitor:
         
         # Relevant fitness subreddits (smaller list for testing)
         self.subreddits = [
-            'fitness', 'bodybuilding', 'supplements', 'cycling', 'running', 'hyrox', 'ironman',
-            'nutrition', 'preworkout', 'crossfit', 'AskReddit', 'weightlifting', 
+            'fitness', 'bodybuilding', 'supplements', 'cycling', 'running', 'hyrox', 'ironman', 'fit', 
+            'SameDaySupplements', 'workingout', 'beginnerfitness', 'creatine', 'swimming', 'science', 'peterattia', 'mildyinteresting', 'HubermanLab',
+            'nutrition', 'preworkout', 'crossfit', 'AskReddit', 'weightlifting', 'workout', 'biohackers', 'supplements', 'Preworkoutsupplements'
         ]
     
     def validate_config(self):
