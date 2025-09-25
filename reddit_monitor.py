@@ -205,7 +205,7 @@ class SimpleRedditMonitor:
         
         return html
     
-   def send_email_report(self, html_report, subject=None):
+    def send_email_report(self, html_report, subject=None):
         """Send the HTML report via email"""
         
         # Email configuration from environment variables
