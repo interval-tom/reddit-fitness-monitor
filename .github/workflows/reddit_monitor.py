@@ -6,6 +6,10 @@ from collections import defaultdict
 import os
 from dotenv import load_dotenv
 
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
 # Load environment variables
 load_dotenv()
 
@@ -201,18 +205,45 @@ class SimpleRedditMonitor:
         
         return html
     
-    def save_report_locally(self, html_report):
-        """Save the report to a local HTML file"""
-        filename = f"reddit_fitness_report_{datetime.now().strftime('%Y-%m-%d')}.html"
+   def send_email_report(self, html_report, subject=None):
+        """Send the HTML report via email"""
+        
+        # Email configuration from environment variables
+        email_from = os.getenv('EMAIL_FROM')
+        email_password = os.getenv('EMAIL_PASSWORD')
+        email_to = os.getenv('EMAIL_TO')
+        smtp_server = os.getenv('SMTP_SERVER', 'smtp.office365.com')
+        smtp_port = int(os.getenv('SMTP_PORT', '587'))
+        
+        if not all([email_from, email_password, email_to]):
+            print("⚠️  Email credentials not configured, skipping email")
+            return False
         
         try:
-            with open(filename, 'w', encoding='utf-8') as f:
-                f.write(html_report)
-            print(f"✅ Report saved as: {filename}")
-            return filename
+            # Create message
+            msg = MIMEMultipart('alternative')
+            msg['Subject'] = subject or f"Reddit Fitness Report - {datetime.now().strftime('%Y-%m-%d')}"
+            msg['From'] = email_from
+            msg['To'] = email_to
+            
+            # Add HTML content
+            html_part = MIMEText(html_report, 'html')
+            msg.attach(html_part)
+            
+            # Send email
+            print(f"📧 Sending email report to {email_to}...")
+            
+            with smtplib.SMTP(smtp_server, smtp_port) as server:
+                server.starttls()  # Enable encryption
+                server.login(email_from, email_password)
+                server.send_message(msg)
+            
+            print("✅ Email sent successfully!")
+            return True
+            
         except Exception as e:
-            print(f"❌ Error saving report: {e}")
-            return None
+            print(f"❌ Error sending email: {e}")
+            return False
     
     def run_report(self):
         """Execute the report process"""
@@ -227,14 +258,21 @@ class SimpleRedditMonitor:
             posts = self.search_reddit_posts(days_back=7)
             if not posts:
                 print("⚠️  No relevant posts found this week")
+                # Still generate and send empty report
+                html_report = self.generate_simple_report([])
+                self.save_report_locally(html_report)
+                self.send_email_report(html_report, "Reddit Fitness Report - No Posts Found")
                 return
             
             # Generate Report
             print("\n📄 Generating report...")
             html_report = self.generate_simple_report(posts)
             
-            # Save Report
+            # Save Report Locally
             self.save_report_locally(html_report)
+            
+            # Send Email Report
+            self.send_email_report(html_report)
             
             print(f"\n🎉 Report completed successfully!")
             print("=" * 60)
@@ -242,7 +280,6 @@ class SimpleRedditMonitor:
         except Exception as e:
             print(f"❌ Error during report generation: {e}")
             raise
-
 
 def main():
     """Main function"""
