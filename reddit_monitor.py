@@ -204,6 +204,19 @@ class SimpleRedditMonitor:
         """
         
         return html
+
+    def save_report_locally(self, html_report):
+        """Save the report to a local HTML file"""
+        filename = f"reddit_fitness_report_{datetime.now().strftime('%Y-%m-%d')}.html"
+        
+        try:
+            with open(filename, 'w', encoding='utf-8') as f:
+                f.write(html_report)
+            print(f"✅ Report saved as: {filename}")
+            return filename
+        except Exception as e:
+            print(f"❌ Error saving report: {e}")
+            return None
     
     def send_email_report(self, html_report, subject=None):
         """Send the HTML report via email"""
