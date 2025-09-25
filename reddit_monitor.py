@@ -38,23 +38,23 @@ class SimpleRedditMonitor:
             'energy drink', 'caffeine', 'stimulant',
             'bcaa', 'amino acids', 'protein powder',
             'recovery drink', 'post workout',
-            'muscle cramps', 'fatigue', 'endurance'
+            'muscle cramps', 'fatigue', 'endurance', 'beetroot', 'cordyceps',
         ]
         
         # Specific competitors to track
         self.competitor_brands = [
             'puresport', 'pure sport',
-            'marchon', 'marchon eyewear',
-            'xendurance', 'x-endurance', 'x endurance',
+            'marchon', 'marchon',
+            'xendurance', 'x-endurance', 'xendurance',
             'esn', 'esn supplements',
             'myprotein', 'my protein',
-            'cadence', 'cadence nutrition'
+            'cadence', 'cadence nutrition', 'gold standard'
         ]
         
         # Relevant fitness subreddits (smaller list for testing)
         self.subreddits = [
-            'fitness', 'bodybuilding', 'supplements',
-            'nutrition', 'preworkout', 'crossfit'
+            'fitness', 'bodybuilding', 'supplements', 'cycling', 'running', 'hyrox', 'ironman',
+            'nutrition', 'preworkout', 'crossfit', 'AskReddit', 'weightlifting', 
         ]
     
     def validate_config(self):
