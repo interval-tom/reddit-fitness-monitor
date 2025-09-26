@@ -73,11 +73,7 @@ class SimpleRedditMonitor:
         ]
         
         # Relevant fitness subreddits (smaller list for testing)
-        self.subreddits = [
-            'fitness', 'bodybuilding', 'supplements', 'cycling', 'running', 'hyrox', 'ironman', 'fit', 
-            'SameDaySupplements', 'workingout', 'beginnerfitness', 'creatine', 'swimming', 'science', 'peterattia', 'mildyinteresting', 'HubermanLab',
-            'nutrition', 'preworkout', 'crossfit', 'AskReddit', 'weightlifting', 'workout', 'biohackers', 'supplements', 'Preworkoutsupplements'
-        ]
+        self.subreddits = ['fitness']
     
     def validate_config(self):
         """Validate that all required environment variables are set"""
@@ -103,15 +99,14 @@ class SimpleRedditMonitor:
         
         for subreddit_name in self.subreddits:
             try:
+                print(f"🔍 Debug - Attempting to access r/{subreddit_name}")
                 subreddit = self.reddit.subreddit(subreddit_name)
+                print(f"🔍 Debug - Subreddit object created successfully")
                 posts_found = 0
                 
                 # Search recent posts
+                print(f"🔍 Debug - Starting to fetch new posts...")
                 for submission in subreddit.new(limit=limit_per_subreddit):
-                    post_date = datetime.fromtimestamp(submission.created_utc)
-                    
-                    if post_date < cutoff_date:
-                        continue
                     
                     # Check if any keywords or competitor brands match
                     text_to_search = f"{submission.title} {submission.selftext}".lower()
