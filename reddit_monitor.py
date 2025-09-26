@@ -93,66 +93,66 @@ class SimpleRedditMonitor:
         return True
 
     def search_reddit_posts(self, days_back=7, limit_per_subreddit=50):
-    """Search Reddit for posts using direct JSON API (no auth required)"""
-    import requests
-    import time
-    
-    all_posts = []
-    cutoff_date = datetime.now() - timedelta(days=days_back)
-    
-    print(f"Searching {len(self.subreddits)} subreddits for posts from the last {days_back} days...")
-    
-    for subreddit_name in self.subreddits:
-        try:
-            # Use Reddit's public JSON API
-            url = f"https://www.reddit.com/r/{subreddit_name}/new.json?limit={limit_per_subreddit}"
-            headers = {'User-Agent': os.getenv('REDDIT_USER_AGENT', 'WeeklyReportBot/1.0')}
-            
-            print(f"🔍 Debug - Fetching from: {url}")
-            response = requests.get(url, headers=headers)
-            
-            if response.status_code != 200:
-                print(f"  r/{subreddit_name}: Error - HTTP {response.status_code}")
-                continue
+        """Search Reddit for posts using direct JSON API (no auth required)"""
+        import requests
+        import time
+        
+        all_posts = []
+        cutoff_date = datetime.now() - timedelta(days=days_back)
+        
+        print(f"Searching {len(self.subreddits)} subreddits for posts from the last {days_back} days...")
+        
+        for subreddit_name in self.subreddits:
+            try:
+                # Use Reddit's public JSON API
+                url = f"https://www.reddit.com/r/{subreddit_name}/new.json?limit={limit_per_subreddit}"
+                headers = {'User-Agent': os.getenv('REDDIT_USER_AGENT', 'WeeklyReportBot/1.0')}
                 
-            data = response.json()
-            posts_found = 0
-            
-            # Parse the JSON response
-            for post in data['data']['children']:
-                post_data = post['data']
-                post_date = datetime.fromtimestamp(post_data['created_utc'])
+                print(f"🔍 Debug - Fetching from: {url}")
+                response = requests.get(url, headers=headers)
                 
-                if post_date < cutoff_date:
+                if response.status_code != 200:
+                    print(f"  r/{subreddit_name}: Error - HTTP {response.status_code}")
                     continue
-                
-                # Check if any keywords or competitor brands match
-                text_to_search = f"{post_data['title']} {post_data.get('selftext', '')}".lower()
-                matched_keywords = [kw for kw in self.keywords if kw.lower() in text_to_search]
-                matched_competitors = [comp for comp in self.competitor_brands if comp.lower() in text_to_search]
-                
-                if matched_keywords or matched_competitors:
-                    post_info = {
-                        'title': post_data['title'],
-                        'score': post_data['score'],
-                        'num_comments': post_data['num_comments'],
-                        'subreddit': subreddit_name,
-                        'matched_keywords': matched_keywords,
-                        'matched_competitors': matched_competitors,
-                        'permalink': f"https://reddit.com{post_data['permalink']}"
-                    }
-                    all_posts.append(post_info)
-                    posts_found += 1
-            
-            print(f"  r/{subreddit_name}: {posts_found} relevant posts")
-            time.sleep(1)  # Be nice to Reddit's servers
                     
-        except Exception as e:
-            print(f"  r/{subreddit_name}: Error - {e}")
-            continue
-    
-    print(f"\n📊 Total posts found: {len(all_posts)}")
-    return all_posts
+                data = response.json()
+                posts_found = 0
+                
+                # Parse the JSON response
+                for post in data['data']['children']:
+                    post_data = post['data']
+                    post_date = datetime.fromtimestamp(post_data['created_utc'])
+                    
+                    if post_date < cutoff_date:
+                        continue
+                    
+                    # Check if any keywords or competitor brands match
+                    text_to_search = f"{post_data['title']} {post_data.get('selftext', '')}".lower()
+                    matched_keywords = [kw for kw in self.keywords if kw.lower() in text_to_search]
+                    matched_competitors = [comp for comp in self.competitor_brands if comp.lower() in text_to_search]
+                    
+                    if matched_keywords or matched_competitors:
+                        post_info = {
+                            'title': post_data['title'],
+                            'score': post_data['score'],
+                            'num_comments': post_data['num_comments'],
+                            'subreddit': subreddit_name,
+                            'matched_keywords': matched_keywords,
+                            'matched_competitors': matched_competitors,
+                            'permalink': f"https://reddit.com{post_data['permalink']}"
+                        }
+                        all_posts.append(post_info)
+                        posts_found += 1
+                
+                print(f"  r/{subreddit_name}: {posts_found} relevant posts")
+                time.sleep(1)  # Be nice to Reddit's servers
+                        
+            except Exception as e:
+                print(f"  r/{subreddit_name}: Error - {e}")
+                continue
+        
+        print(f"\n📊 Total posts found: {len(all_posts)}")
+        return all_posts
     
     def generate_simple_report(self, posts):
         """Generate a simple HTML report"""
