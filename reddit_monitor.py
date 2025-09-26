@@ -66,7 +66,7 @@ class SimpleRedditMonitor:
         ]
         
         # Relevant fitness subreddits (smaller list for testing)
-        self.subreddits = ['fitness']
+        self.subreddits = ['AskReddit']
     
     def validate_config(self):
         """Validate that all required environment variables are set"""
@@ -96,7 +96,15 @@ class SimpleRedditMonitor:
             try:
                 # Use Reddit's public JSON API
                 url = f"https://www.reddit.com/r/{subreddit_name}/new.json?limit={limit_per_subreddit}"
-                headers = {'User-Agent': os.getenv('REDDIT_USER_AGENT', 'WeeklyReportBot/1.0')}
+                headers = {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                    'Accept': 'application/json',
+                    'Accept-Language': 'en-US,en;q=0.5',
+                    'Accept-Encoding': 'gzip, deflate',
+                    'DNT': '1',
+                    'Connection': 'keep-alive',
+                    'Upgrade-Insecure-Requests': '1',
+                }
                 
                 print(f"🔍 Debug - Fetching from: {url}")
                 response = requests.get(url, headers=headers)
@@ -135,7 +143,8 @@ class SimpleRedditMonitor:
                         posts_found += 1
                 
                 print(f"  r/{subreddit_name}: {posts_found} relevant posts")
-                time.sleep(1)  # Be nice to Reddit's servers
+                time.sleep(2)  # Longer delay to avoid rate limits
+
                         
             except Exception as e:
                 print(f"  r/{subreddit_name}: Error - {e}")
