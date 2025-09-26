@@ -18,6 +18,24 @@ class SimpleRedditMonitor:
         """Initialize with environment variables for security"""
         
         # Reddit configuration from env
+self.reddit = praw.Reddit(
+    client_id=os.getenv('REDDIT_CLIENT_ID'),
+    client_secret=os.getenv('REDDIT_CLIENT_SECRET'),
+    user_agent=os.getenv('REDDIT_USER_AGENT', 'WeeklyReportBot/1.0')
+)
+
+# ADD THIS DEBUG CODE:
+print(f"🔍 Debug - Client ID length: {len(os.getenv('REDDIT_CLIENT_ID', ''))}")
+print(f"🔍 Debug - Client Secret length: {len(os.getenv('REDDIT_CLIENT_SECRET', ''))}")
+print(f"🔍 Debug - User Agent: {os.getenv('REDDIT_USER_AGENT', 'NOT SET')}")
+
+# Test Reddit connection
+try:
+    print(f"🔍 Debug - Testing Reddit connection...")
+    test_user = self.reddit.user.me()
+    print(f"🔍 Debug - Reddit connection successful! User: {test_user}")
+except Exception as e:
+    print(f"🔍 Debug - Reddit connection failed: {e}")# Reddit configuration from env
         self.reddit = praw.Reddit(
             client_id=os.getenv('REDDIT_CLIENT_ID'),
             client_secret=os.getenv('REDDIT_CLIENT_SECRET'),
