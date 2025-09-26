@@ -16,12 +16,14 @@ load_dotenv()
 class SimpleRedditMonitor:
     def __init__(self):
         """Initialize with environment variables for security"""
-        
-        # Reddit configuration from env
+                
+                # Reddit configuration from env (read-only access)
         self.reddit = praw.Reddit(
             client_id=os.getenv('REDDIT_CLIENT_ID'),
             client_secret=os.getenv('REDDIT_CLIENT_SECRET'),
-            user_agent=os.getenv('REDDIT_USER_AGENT', 'WeeklyReportBot/1.0')
+            user_agent=os.getenv('REDDIT_USER_AGENT', 'WeeklyReportBot/1.0'),
+            username=None,  # No username for read-only
+            password=None   # No password for read-only
         )
         
         # ADD DEBUG CODE:
