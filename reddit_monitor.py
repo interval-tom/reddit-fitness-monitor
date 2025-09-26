@@ -37,15 +37,10 @@ class SimpleRedditMonitor:
             print(f"🔍 Debug - Reddit connection successful! User: {test_user}")
         except Exception as e:
             print(f"🔍 Debug - Reddit connection failed: {e}")
-        
-        
-        # Rest of your keywords and subreddits...
-        
+                
 
         
-        # OpenAI configuration
-        self.openai_key = os.getenv('OPENAI_API_KEY')
-        openai.api_key = self.openai_key
+    
         
         # Fitness/nutrition keywords to monitor
         self.keywords = [
