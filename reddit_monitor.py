@@ -1,5 +1,4 @@
 import praw
-import openai
 from datetime import datetime, timedelta
 import json
 from collections import defaultdict
@@ -39,9 +38,6 @@ class SimpleRedditMonitor:
         except Exception as e:
             print(f"🔍 Debug - Reddit connection failed: {e}")
         
-        # OpenAI configuration
-        self.openai_key = os.getenv('OPENAI_API_KEY')
-        openai.api_key = self.openai_key
         
         # Rest of your keywords and subreddits...
         
@@ -80,8 +76,7 @@ class SimpleRedditMonitor:
     def validate_config(self):
         """Validate that all required environment variables are set"""
         required_vars = [
-            'REDDIT_CLIENT_ID', 'REDDIT_CLIENT_SECRET', 
-            'OPENAI_API_KEY'
+            'REDDIT_CLIENT_ID', 'REDDIT_CLIENT_SECRET'
         ]
         
         missing_vars = [var for var in required_vars if not os.getenv(var)]
